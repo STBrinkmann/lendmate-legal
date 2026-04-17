@@ -1,6 +1,6 @@
 # lendmate-legal
 
-Statische Website für [lendmate.dev](https://lendmate.dev) — Rechtliche Dokumente und Deep-Link-Infrastruktur der LendMate-App.
+Statische Website für [lendmate.dev](https://lendmate.dev) - Rechtliche Dokumente und Deep-Link-Infrastruktur der LendMate-App.
 
 ## Inhalt
 
