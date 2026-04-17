@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Datenschutzerklärung für die LendMate-App und die Website lendmate.dev.">
+  <meta name="robots" content="index, follow">
+  <title>Datenschutzerklärung – LendMate</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="brand" href="/">LendMate</a>
+      <p class="tagline">Einfach teilen in vertrauten Gruppen.</p>
+    </header>
+
+    <main>
+      <h1>Datenschutzerklärung</h1>
+      <p class="meta">Stand: <span class="date">April 2026</span> · Version 0.1 (Entwurf)</p>
+
+      <div class="notice">
+        <strong>Hinweis (Entwurfsversion):</strong> Diese Datenschutzerklärung deckt den aktuellen
+        Funktionsumfang der LendMate-MVP-Phase ab. Vor dem öffentlichen Launch wird sie
+        rechtskonform über <a href="https://datenschutz-generator.de/" target="_blank" rel="noopener">datenschutz-generator.de</a>
+        neu generiert und durch eine anwaltliche Prüfung ergänzt.
+      </div>
+
+      <h2>1. Verantwortlicher</h2>
+      <p>
+        Verantwortlich im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:
+      </p>
+      <p>
+        Sebastian Brinkmann<br>
+        Körnerstraße 79<br>
+        90459 Nürnberg<br>
+        Deutschland<br>
+        E-Mail: <a href="mailto:bastibrinkmann94@gmail.com">bastibrinkmann94@gmail.com</a>
+      </p>
+
+      <h2>2. Geltungsbereich</h2>
+      <p>
+        Diese Datenschutzerklärung gilt für die mobile Anwendung <strong>LendMate</strong>
+        (Android und iOS) sowie die Website <a href="https://lendmate.dev">lendmate.dev</a>.
+      </p>
+
+      <h2>3. Zweck und Funktion der App</h2>
+      <p>
+        LendMate ist eine App zum Verwalten privater Verleihvorgänge zwischen Freund:innen,
+        Familie und Nachbar:innen innerhalb selbst gewählter Gruppen. Die App ermöglicht es,
+        eigene Gegenstände innerhalb solcher Gruppen sichtbar zu machen, Leihanfragen zu
+        stellen, Rückgaben zu dokumentieren und an Rückgabetermine erinnert zu werden.
+      </p>
+
+      <h2>4. Welche Daten wir verarbeiten</h2>
+      <h3>4.1 Kontodaten</h3>
+      <ul>
+        <li>E-Mail-Adresse (Registrierung, Login, Passwort-Reset)</li>
+        <li>Passwort (verschlüsselt gespeichert durch unseren Auth-Provider Supabase)</li>
+        <li>Anzeigename (frei wählbar)</li>
+        <li>Avatar (entweder ein Preset oder ein selbst hochgeladenes Foto)</li>
+        <li>Zeitpunkt der Zustimmung zu Datenschutz und Nutzungsbedingungen</li>
+      </ul>
+
+      <h3>4.2 Inhalte, die du erstellst</h3>
+      <ul>
+        <li>Gruppen (Name, Beschreibung, Icon, Mitgliederliste)</li>
+        <li>Gegenstände (Name, Beschreibung, Kategorie, Zustand, Fotos)</li>
+        <li>Ausleihvorgänge (Zeiträume, Nachrichten, Rückgabestatus, optionales Feedback)</li>
+        <li>Schadensmeldungen (Beschreibung und Fotos)</li>
+      </ul>
+
+      <h3>4.3 Gerätedaten</h3>
+      <ul>
+        <li>
+          Push-Notification-Token (Firebase Cloud Messaging) zur Zustellung von Benachrichtigungen
+        </li>
+        <li>
+          Geräte- und Betriebssystem-Informationen im Fehlerfall (Absturzberichte, siehe Abschnitt 6)
+        </li>
+      </ul>
+
+      <h3>4.4 Keine Tracking- oder Werbedaten</h3>
+      <p>
+        LendMate enthält kein Werbetracking, kein Analytics-SDK, keine Drittanbieter-Cookies und
+        verkauft keine Daten an Dritte. Es werden auch keine Standortdaten erhoben.
+      </p>
+
+      <h2>5. Rechtsgrundlagen</h2>
+      <ul>
+        <li>
+          <strong>Art. 6 Abs. 1 lit. b DSGVO</strong> (Vertragserfüllung): für Registrierung,
+          Login, Ausleihvorgänge, Benachrichtigungen und alle Funktionen, die du aktiv nutzt.
+        </li>
+        <li>
+          <strong>Art. 6 Abs. 1 lit. c DSGVO</strong> (rechtliche Verpflichtung): z. B. für
+          die Erfüllung von Auskunfts- und Löschpflichten.
+        </li>
+        <li>
+          <strong>Art. 6 Abs. 1 lit. f DSGVO</strong> (berechtigtes Interesse): für
+          Fehler-Monitoring zur Sicherstellung der Stabilität der App.
+        </li>
+        <li>
+          <strong>Art. 6 Abs. 1 lit. a DSGVO</strong> (Einwilligung): soweit du uns für
+          bestimmte Verarbeitungen ausdrücklich eine Einwilligung erteilst (z. B. Push-Mitteilungen).
+        </li>
+      </ul>
+
+      <h2>6. Auftragsverarbeiter und eingesetzte Dienste</h2>
+      <p>
+        Wir setzen die folgenden Dienste ein, mit denen jeweils ein Auftragsverarbeitungsvertrag
+        (AVV / DPA) gemäß Art. 28 DSGVO geschlossen wurde:
+      </p>
+
+      <table>
+        <thead>
+          <tr><th>Dienst</th><th>Zweck</th><th>Region</th><th>Rechtsgrundlage</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Supabase (Supabase Inc.)</td>
+            <td>Backend, Datenbank, Authentifizierung, Dateispeicher</td>
+            <td>Frankfurt am Main (EU, eu-central-1)</td>
+            <td>Art. 6 Abs. 1 lit. b DSGVO</td>
+          </tr>
+          <tr>
+            <td>Google / Firebase (Google Ireland Ltd.)</td>
+            <td>Push-Benachrichtigungen über Firebase Cloud Messaging</td>
+            <td>EU / USA — EU-US Data Privacy Framework</td>
+            <td>Art. 6 Abs. 1 lit. b DSGVO</td>
+          </tr>
+          <tr>
+            <td>Sentry (Functional Software Inc.)</td>
+            <td>Fehler- und Crash-Tracking</td>
+            <td>EU (Frankfurt)</td>
+            <td>Art. 6 Abs. 1 lit. f DSGVO</td>
+          </tr>
+          <tr>
+            <td>Resend (Resend Inc.)</td>
+            <td>Versand von Transaktions-E-Mails (Login, Passwort-Reset, Einladungen)</td>
+            <td>EU / USA — EU-US Data Privacy Framework</td>
+            <td>Art. 6 Abs. 1 lit. b DSGVO</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Für Datenübermittlungen in Drittländer (soweit nicht innerhalb der EU) bestehen
+        Angemessenheitsbeschlüsse, EU-Standardvertragsklauseln oder eine Zertifizierung im
+        EU-US Data Privacy Framework als Übermittlungsgrundlagen.
+      </p>
+
+      <h2>7. Speicherdauer</h2>
+      <ul>
+        <li>
+          Kontodaten: bis zur Löschung deines Kontos durch dich (siehe Abschnitt 10) oder nach
+          24 Monaten Inaktivität.
+        </li>
+        <li>
+          Inhalte (Gegenstände, Ausleihvorgänge): bis zur Löschung durch dich. Historische
+          Ausleihvorgänge können für die andere beteiligte Person sichtbar bleiben
+          (anonymisiert als „Gelöschter Nutzer"), damit deren Verlauf nachvollziehbar bleibt.
+        </li>
+        <li>
+          Crash-Reports (Sentry): 90 Tage.
+        </li>
+        <li>
+          Server-Logs: 30 Tage.
+        </li>
+      </ul>
+
+      <h2>8. Sichtbarkeit innerhalb der App</h2>
+      <p>
+        Profil und hochgeladene Gegenstände sind nur für Mitglieder derjenigen Gruppen sichtbar,
+        in denen du Mitglied bist bzw. in denen du einen Gegenstand sichtbar gemacht hast. Die
+        technische Durchsetzung erfolgt über Row-Level-Security-Policies in unserer Datenbank.
+      </p>
+
+      <h2>9. Deine Rechte</h2>
+      <p>Du hast gegenüber uns folgende Rechte hinsichtlich deiner personenbezogenen Daten:</p>
+      <ul>
+        <li>Recht auf Auskunft (Art. 15 DSGVO)</li>
+        <li>Recht auf Berichtigung (Art. 16 DSGVO)</li>
+        <li>Recht auf Löschung (Art. 17 DSGVO)</li>
+        <li>Recht auf Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
+        <li>Recht auf Datenübertragbarkeit (Art. 20 DSGVO)</li>
+        <li>Recht auf Widerspruch (Art. 21 DSGVO)</li>
+        <li>Recht auf Widerruf erteilter Einwilligungen (Art. 7 Abs. 3 DSGVO)</li>
+      </ul>
+      <p>
+        Du hast zudem das Recht, dich bei der zuständigen Aufsichtsbehörde zu beschweren
+        (Art. 77 DSGVO). Für Bayern ist dies das
+        <a href="https://www.lda.bayern.de/" target="_blank" rel="noopener">Bayerische Landesamt für Datenschutzaufsicht (BayLDA)</a>.
+      </p>
+      <p>
+        Anfragen zu deinen Rechten richte bitte an
+        <a href="mailto:bastibrinkmann94@gmail.com">bastibrinkmann94@gmail.com</a>.
+      </p>
+
+      <h2>10. Kontolöschung</h2>
+      <p>
+        Du kannst dein Konto jederzeit direkt in der App löschen:
+        <em>Profil → Einstellungen → Konto löschen</em>. Details zum Umfang der Löschung
+        findest du auf der Seite <a href="/account-deletion/">Konto löschen</a>.
+      </p>
+
+      <h2>11. Datensicherheit</h2>
+      <p>
+        Die Kommunikation mit unseren Servern erfolgt ausschließlich verschlüsselt (HTTPS / TLS).
+        Passwörter werden niemals im Klartext gespeichert. Der Zugriff auf Daten innerhalb der
+        Datenbank ist über Row-Level-Security-Policies auf die jeweils berechtigten Nutzer:innen
+        beschränkt.
+      </p>
+
+      <h2>12. Mindestalter</h2>
+      <p>
+        Die Nutzung von LendMate ist erst ab 16 Jahren gestattet (Art. 8 DSGVO).
+      </p>
+
+      <h2>13. Änderungen dieser Datenschutzerklärung</h2>
+      <p>
+        Wir passen diese Datenschutzerklärung an, wenn sich Funktionen oder eingesetzte Dienste
+        ändern. Die jeweils aktuelle Version findest du stets unter
+        <a href="https://lendmate.dev/privacy/">lendmate.dev/privacy</a>. Bei wesentlichen
+        Änderungen informieren wir dich zusätzlich innerhalb der App.
+      </p>
+    </main>
+
+    <footer>
+      <div>&copy; <span id="year">2026</span> Sebastian Brinkmann</div>
+      <nav>
+        <a href="/imprint/">Impressum</a>
+        <a href="/privacy/">Datenschutz</a>
+        <a href="/terms/">Nutzungsbedingungen</a>
+      </nav>
+    </footer>
+  </div>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

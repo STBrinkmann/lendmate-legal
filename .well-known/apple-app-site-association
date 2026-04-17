@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["REPLACE_WITH_APPLE_TEAM_ID.com.lendmate.lendmate"],
+        "components": [
+          { "/": "/invite/*", "comment": "Gruppen-Einladungen" },
+          { "/": "/auth/*", "comment": "Auth-Redirects (Magic Link, OAuth)" },
+          { "/": "/reset-password", "comment": "Passwort zurücksetzen" }
+        ]
+      }
+    ]
+  }
+}
