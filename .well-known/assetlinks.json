@@ -5,8 +5,7 @@
       "namespace": "android_app",
       "package_name": "com.lendmate.lendmate",
       "sha256_cert_fingerprints": [
-        "REPLACE_WITH_DEBUG_SHA256_FINGERPRINT",
-        "REPLACE_WITH_RELEASE_SHA256_FINGERPRINT"
+        "57:E8:5D:57:B9:26:EC:FC:4F:06:2A:17:0E:9B:D0:50:5B:06:A2:52:49:5B:47:67:D1:23:47:9A:C3:A7:B0:EF"
       ]
     }
   }
