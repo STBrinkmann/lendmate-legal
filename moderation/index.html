@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Entscheidungsseite für gemeldete Rückmeldungen in LendMate.">
+  <!-- Die Seite ist nur mit gültigem Token sinnvoll und zeigt gemeldete Zitate.
+       Sie gehört in keinen Index und in keinen Referrer. -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Moderation – LendMate</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+  <style>
+    .panel {
+      background: #fff;
+      border: 1px solid var(--cloud);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: 24px 0;
+    }
+
+    blockquote {
+      margin: 20px 0;
+      padding: 16px;
+      background: var(--cream);
+      border-left: 4px solid var(--terracotta);
+      border-radius: 8px;
+      font-style: italic;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    dl {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 4px 16px;
+      font-size: 15px;
+      margin: 0;
+    }
+
+    dt { color: var(--slate); }
+    dd { margin: 0; overflow-wrap: anywhere; }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .actions button {
+      font: inherit;
+      font-weight: 600;
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      min-height: 48px;
+    }
+
+    .actions button[disabled] { opacity: .5; cursor: default; }
+
+    .danger { background: var(--terracotta); color: #fff; }
+    .keep { background: #fff; color: var(--forest); border-color: var(--sage); }
+
+    .note-text {
+      color: var(--slate);
+      font-size: 14px;
+      margin-top: 20px;
+    }
+
+    .status { color: var(--slate); }
+    .status.error { color: var(--terracotta); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="brand" href="/">LendMate</a>
+      <p class="tagline">Einfach teilen in vertrauten Gruppen.</p>
+    </header>
+
+    <main id="main">
+      <p class="status" id="boot">Meldung wird geladen …</p>
+    </main>
+
+    <footer>
+      <div>&copy; <span id="year">2026</span> Sebastian Brinkmann</div>
+      <nav>
+        <a href="/imprint/">Impressum</a>
+        <a href="/privacy/">Datenschutz</a>
+        <a href="/terms/">Nutzungsbedingungen</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Die Edge Function liefert nur noch JSON. Die Seite hier rendert es —
+    // Supabase schreibt HTML-Antworten auf *.supabase.co zu text/plain um,
+    // deshalb liegt die Darstellung auf unserer eigenen Domain.
+    var API = 'https://klbxmfjhjgodbttwrwad.supabase.co/functions/v1/review-report-decision';
+
+    var main = document.getElementById('main');
+    var token = new URLSearchParams(location.search).get('token') || '';
+
+    var REASON_FALLBACK = {
+      harassment: 'Beleidigung oder Belästigung',
+      false_info: 'Falsche Behauptung',
+      spam: 'Spam oder Werbung',
+      hate: 'Hass oder Diskriminierung',
+      private_data: 'Private Daten',
+      other: 'Sonstiges'
+    };
+
+    var ERRORS = {
+      missing_token: 'Der Link ist unvollständig — es fehlt das Token.',
+      unknown_token: 'Zu diesem Link gibt es keine Meldung. Vermutlich ist er nicht vollständig aus der Mail kopiert worden.',
+      unknown_action: 'Unbekannte Aktion.',
+      server_misconfigured: 'Der Server ist nicht vollständig konfiguriert.',
+      update_failed: 'Das hat nicht geklappt. Bitte lade die Seite neu und versuche es noch einmal.'
+    };
+
+    /// Alles, was aus der Meldung kommt, ist von Nutzern geschrieben und wird
+    /// ausschließlich als Text gesetzt — nie als HTML.
+    function el(tag, className, text) {
+      var node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined && text !== null) node.textContent = text;
+      return node;
+    }
+
+    function render(nodes) {
+      main.replaceChildren.apply(main, nodes);
+    }
+
+    function showMessage(heading, text, isError) {
+      var p = el('p', 'status' + (isError ? ' error' : ''), text);
+      render([el('h1', null, heading), p]);
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '';
+      try {
+        return new Date(iso).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' });
+      } catch (e) {
+        return iso;
+      }
+    }
+
+    function showDecided(data) {
+      var removed = data.outcome === 'removed';
+      var when = formatDate(data.decided_at);
+      var lead = data.raced
+        ? 'Jemand war schneller.'
+        : (when ? 'Am ' + when + ' entschieden.' : 'Entschieden.');
+
+      var panel = el('div', 'panel');
+      panel.appendChild(el('p', 'status', lead));
+      panel.appendChild(el('blockquote', null, data.feedback || ''));
+      panel.appendChild(el('p', null, removed
+        ? 'Die Rückmeldung erscheint in keinem Profil mehr.'
+        : 'Die Rückmeldung ist wieder im Profil sichtbar.'));
+      if (!data.raced) {
+        panel.appendChild(el('p', 'note-text', 'Der Melder wurde benachrichtigt.'));
+      }
+
+      render([el('h1', null, removed ? 'Entfernt' : 'Behalten'), panel]);
+    }
+
+    function showOpen(data) {
+      var panel = el('div', 'panel');
+      panel.appendChild(el('p', 'status', 'Sie ist derzeit für niemanden sichtbar.'));
+      panel.appendChild(el('blockquote', null, data.feedback || ''));
+
+      var dl = el('dl');
+      dl.appendChild(el('dt', null, 'Grund'));
+      var reasonDd = el('dd');
+      reasonDd.appendChild(el('strong', null,
+        data.reason_label || REASON_FALLBACK[data.reason] || data.reason || 'Unbekannt'));
+      dl.appendChild(reasonDd);
+      if (data.note) {
+        dl.appendChild(el('dt', null, 'Notiz'));
+        dl.appendChild(el('dd', null, data.note));
+      }
+      panel.appendChild(dl);
+
+      var actions = el('div', 'actions');
+      var removeBtn = el('button', 'danger', 'Bewertung entfernen');
+      var keepBtn = el('button', 'keep', 'Bewertung behalten');
+      actions.appendChild(removeBtn);
+      actions.appendChild(keepBtn);
+      panel.appendChild(actions);
+
+      var hint = el('p', 'note-text',
+        '„Behalten" ist kein Formfehler: Wenn mehrere Leute warnen, dass jemand ' +
+        'nichts zurückbringt, ist das eine Warnung, keine Entgleisung. Die ' +
+        'Rückmeldung erscheint dann wieder im Profil.');
+      panel.appendChild(hint);
+
+      function decide(action) {
+        removeBtn.disabled = true;
+        keepBtn.disabled = true;
+        hint.textContent = 'Wird gespeichert …';
+        send('POST', { token: token, action: action }).then(function (result) {
+          if (result.ok) {
+            showDecided(result.data);
+          } else {
+            removeBtn.disabled = false;
+            keepBtn.disabled = false;
+            hint.className = 'note-text status error';
+            hint.textContent = result.message;
+          }
+        });
+      }
+
+      removeBtn.addEventListener('click', function () { decide('remove'); });
+      keepBtn.addEventListener('click', function () { decide('keep'); });
+
+      render([el('h1', null, 'Gemeldete Rückmeldung'), panel]);
+    }
+
+    function send(method, body) {
+      var options = {
+        method: method,
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store'
+      };
+      var url = API;
+      if (method === 'GET') {
+        url += '?token=' + encodeURIComponent(token);
+      } else {
+        options.headers['Content-Type'] = 'application/json';
+        options.body = JSON.stringify(body);
+      }
+
+      return fetch(url, options).then(function (res) {
+        return res.json().then(function (data) {
+          if (res.ok && !data.error) return { ok: true, data: data };
+          return {
+            ok: false,
+            message: ERRORS[data.error] || 'Unerwarteter Fehler (' + res.status + ').'
+          };
+        });
+      }).catch(function () {
+        return { ok: false, message: 'Keine Verbindung zum Server. Bist du online?' };
+      });
+    }
+
+    if (!token) {
+      showMessage('Kein Token', ERRORS.missing_token, true);
+    } else {
+      send('GET').then(function (result) {
+        if (!result.ok) {
+          showMessage('Das hat nicht geklappt', result.message, true);
+        } else if (result.data.state === 'decided') {
+          showDecided(result.data);
+        } else {
+          showOpen(result.data);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

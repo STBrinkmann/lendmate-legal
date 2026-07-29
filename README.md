@@ -11,6 +11,7 @@ Statische Website für [lendmate.dev](https://lendmate.dev) - Rechtliche Dokumen
 | `/privacy/` | Datenschutzerklärung (DSGVO) |
 | `/terms/` | Nutzungsbedingungen |
 | `/account-deletion/` | Anleitung zur Kontolöschung (für Play Store / App Store verlinkt) |
+| `/moderation/` | Entscheidungsseite für gemeldete Rückmeldungen (nur mit `?token=` aus der Moderationsmail sinnvoll, `noindex`) |
 | `/.well-known/assetlinks.json` | Android App Links (Task 2.4) |
 | `/.well-known/apple-app-site-association` | iOS Universal Links (Task 2.4) |
 
@@ -25,6 +26,24 @@ Wird über **GitHub Pages** ausgeliefert.
 `.nojekyll` ist gesetzt, damit GitHub den Jekyll-Build überspringt und Dateien ohne
 Extension (wie `apple-app-site-association`) sowie Pfade mit `.well-known` unverändert
 ausliefert.
+
+## Warum `/moderation/` hier liegt
+
+Die Seite gehört inhaltlich zur App, nicht zu den Rechtstexten — sie steht trotzdem hier,
+weil sie nirgendwo sonst hin kann. Supabase schreibt auf `*.supabase.co` jede GET-Antwort
+mit `text/html` zu `text/plain` um und setzt zusätzlich
+`Content-Security-Policy: default-src 'none'; sandbox`. Die Edge Function
+`review-report-decision` konnte ihre Seite deshalb nicht selbst ausliefern; der Moderator
+bekam den Quelltext als Text zu sehen. HTML von der Function-Domain zu liefern bräuchte das
+kostenpflichtige Custom-Domain-Add-on.
+
+Also: Darstellung hier, Logik dort. Die Seite holt sich die gemeldete Rückmeldung per
+`fetch` von `review-report-decision` (JSON, CORS auf `lendmate.dev` beschränkt) und schickt
+die Entscheidung als POST zurück. Alte Mails, die noch direkt auf die Function zeigen,
+werden von ihr hierher weitergeleitet.
+
+Ändert sich die Supabase-Projekt-Ref, muss die Konstante `API` in
+`moderation/index.html` mitgezogen werden.
 
 ## Offene TODOs vor Public Launch
 
