@@ -101,8 +101,15 @@
         'Hast du LendMate schon? Dann öffne die App, geh auf „Gruppen“ und ' +
         'gib den Code dort ein.'));
 
+      // Der Knopf uebergibt bewusst die PFADFORM /invite/<code>, obwohl der
+      // geteilte Link ?c= benutzt. Grund: die Pfadform verstehen alle
+      // App-Versionen, die ?c=-Form erst die, die die Route dafuer mitbringt.
+      // Aeltere Installationen landen sonst im errorBuilder von go_router
+      // ("Diese Seite gibt es nicht"), obwohl die App da ist.
+      // Nicht auf ?c= "korrigieren" - die neue App behaelt /invite/:code
+      // unbefristet, der Knopf funktioniert damit in beide Richtungen.
       LmAppLink.renderActions(panel, {
-        appPath: '/invite/?c=' + encodeURIComponent(code),
+        appPath: '/invite/' + encodeURIComponent(code),
         referrer: 'invite=' + code,
         openLabel: 'Einladung in der App öffnen'
       });

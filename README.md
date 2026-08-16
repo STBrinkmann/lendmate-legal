@@ -62,6 +62,26 @@ nicht mit.
   Syntax. Fragment → Query umzuschreiben würde der App etwas anderes übergeben, als sie
   erwartet. Die Auth-Seiten schicken deshalb ehrlich auf den richtigen Weg zurück.
 
+### Zwei Linkformen, zwei Zwecke
+
+Der geteilte Link und der `intent://`-Knopf benutzen **absichtlich verschiedene Formen**:
+
+| | Form | Warum |
+|---|---|---|
+| geteilter Link, QR | `/invite/?c=<code>` | echte Datei → 200 → Vorschaukarte im Messenger |
+| „In der App öffnen“ | `/invite/<code>` | verstehen **alle** App-Versionen |
+
+Die Pfadform kennt jede je ausgelieferte App-Version; die `?c=`-Form erst die, die die
+Route dafür mitbringt. Bekäme der Knopf `?c=`, landete eine ältere Installation im
+`errorBuilder` von go_router („Diese Seite gibt es nicht“) — obwohl die App installiert
+ist. Die neue App behält `/invite/:code` unbefristet, der Knopf funktioniert also in
+beide Richtungen. **Nicht auf `?c=` vereinheitlichen.**
+
+Für den geteilten Link selbst hilft das nicht: den fängt Android direkt ab, bevor diese
+Seite überhaupt lädt. Alte Clients werden deshalb über
+`app_config.min_supported_version_android` ausgesperrt — siehe `docs/RELEASE.md` im
+App-Repo.
+
 Der `intent://`-Button ist die Notausfahrt für den Fall, dass `autoVerify` fehlschlägt —
 was aktuell bei Play-Builds passiert, solange der Play-App-Signing-Fingerprint unten fehlt.
 Der `&referrer=`-Parameter am Play-Link kostet nichts und ist die Vorarbeit dafür, eine
