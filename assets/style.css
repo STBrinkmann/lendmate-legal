@@ -178,8 +178,107 @@ th, td {
 
 th { background: var(--mint); color: var(--forest); font-weight: 600; }
 
+/* --- App-Landeseiten (/invite/, /auth/*, /reset-password, 404) ------------
+   Diese Seiten sind das, was jemand sieht, wenn der Deep-Link NICHT von der
+   App abgefangen wurde - App nicht installiert, Desktop, In-App-Browser oder
+   fehlgeschlagene App-Link-Verifizierung. Sie muessen ohne die App
+   funktionieren und trotzdem einen Weg zurueck in die App anbieten. */
+
+.panel {
+  background: #fff;
+  border: 1px solid var(--cloud);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin: 24px 0;
+}
+
+.btn-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 24px 0 8px;
+}
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  min-height: 48px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary { background: var(--forest); color: #fff; }
+.btn-primary:hover { background: var(--sage); color: #fff; }
+
+.btn-secondary { background: #fff; color: var(--forest); border-color: var(--sage); }
+.btn-secondary:hover { background: var(--mint); color: var(--forest); }
+
+.btn[disabled] { opacity: .5; cursor: default; }
+
+/* Der Einladungscode - gross genug zum Abtippen, wenn alles andere scheitert. */
+.code-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--mint);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 8px 0 4px;
+}
+
+.code-box .code {
+  flex: 1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--forest);
+  overflow-wrap: anywhere;
+}
+
+.code-box button {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 14px;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--sage);
+  background: #fff;
+  color: var(--forest);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.label {
+  color: var(--slate);
+  font-size: 14px;
+  margin: 0;
+}
+
+.note-text {
+  color: var(--slate);
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.hero-icon {
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
 @media (max-width: 520px) {
   body { font-size: 16px; padding: 16px 12px 48px; }
   h1 { font-size: 24px; }
   h2 { font-size: 18px; }
+  .panel { padding: 20px 16px; }
 }

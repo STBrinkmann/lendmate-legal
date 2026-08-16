@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Passwort für LendMate zurücksetzen.">
+  <meta name="robots" content="noindex, nofollow">
+  <!-- In der URL steckt das Recovery-Token. Es geht keinen Referrer etwas an. -->
+  <meta name="referrer" content="no-referrer">
+  <title>Passwort zurücksetzen – LendMate</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="brand" href="/">LendMate</a>
+      <p class="tagline">Einfach teilen in vertrauten Gruppen.</p>
+    </header>
+
+    <main id="main">
+      <div class="hero-icon">🔑</div>
+      <h1>Passwort zurücksetzen</h1>
+      <p>
+        Dieser Link setzt dein Passwort direkt in der LendMate-App zurück —
+        dein Browser hat ihn abgefangen, statt ihn dorthin weiterzureichen.
+      </p>
+
+      <div class="panel">
+        <p>
+          <strong>So geht es weiter:</strong> Öffne die E-Mail auf dem
+          Android-Handy, auf dem LendMate installiert ist, und tippe den Link
+          dort an. Dann öffnet sich das Formular in der App.
+        </p>
+        <p class="note-text">
+          Ist der Link schon zu alt oder verbraucht, fordere in der App unter
+          „Passwort vergessen“ einfach einen neuen an — das geht beliebig oft.
+        </p>
+      </div>
+    </main>
+
+    <footer>
+      <div>&copy; <span id="year">2026</span> Sebastian Brinkmann</div>
+      <nav>
+        <a href="/imprint/">Impressum</a>
+        <a href="/privacy/">Datenschutz</a>
+        <a href="/terms/">Nutzungsbedingungen</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script src="/assets/applink.js"></script>
+  <script>
+    LmAppLink.setYear();
+
+    /* Kein Versuch, das Recovery-Token an die App durchzureichen: Supabase
+     * liefert es im URL-Fragment, und intent:// belegt den Fragment-Slot
+     * bereits fuer seine eigene Syntax. Ein Umschreiben Fragment -> Query
+     * wuerde der App etwas anderes uebergeben, als sie erwartet, und den
+     * Reset still scheitern lassen. Lieber ehrlich auf den richtigen Weg
+     * schicken. */
+    var panel = document.createElement('div');
+    panel.className = 'panel';
+    LmAppLink.renderActions(panel, { appPath: '/', openLabel: 'LendMate öffnen' });
+    document.getElementById('main').appendChild(panel);
+  </script>
+</body>
+</html>

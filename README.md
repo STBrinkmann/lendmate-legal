@@ -12,6 +12,11 @@ Statische Website für [lendmate.dev](https://lendmate.dev) - Rechtliche Dokumen
 | `/terms/` | Nutzungsbedingungen |
 | `/account-deletion/` | Anleitung zur Kontolöschung (für Play Store / App Store verlinkt) |
 | `/moderation/` | Entscheidungsseite für gemeldete Rückmeldungen (nur mit `?token=` aus der Moderationsmail sinnvoll, `noindex`) |
+| `/invite/?c=<code>` | Einladungs-Landeseite — siehe unten |
+| `/auth/callback/`, `/auth/confirm/` | Auffangseiten für Anmelde- und Bestätigungslinks |
+| `/reset-password/` | Auffangseite für Passwort-Reset-Links |
+| `/404.html` | Auffangnetz: übersetzt alte `/invite/<code>`-Links, sonst gebrandete 404 |
+| `/assets/applink.js` | Gemeinsame Deep-Link-Helfer der vier Seiten oben |
 | `/.well-known/assetlinks.json` | Android App Links (Task 2.4) |
 | `/.well-known/apple-app-site-association` | iOS Universal Links (Task 2.4) |
 
@@ -26,6 +31,42 @@ Wird über **GitHub Pages** ausgeliefert.
 `.nojekyll` ist gesetzt, damit GitHub den Jekyll-Build überspringt und Dateien ohne
 Extension (wie `apple-app-site-association`) sowie Pfade mit `.well-known` unverändert
 ausliefert.
+
+## Die App-Landeseiten (`/invite/`, `/auth/*`, `/reset-password/`)
+
+Die App zeigt auf vier Pfadfamilien dieser Domain: `/invite/*`, `/auth/callback`,
+`/auth/confirm` und `/reset-password`. Sind App-Link-Verifizierung und App-Installation
+in Ordnung, fängt Android den Link ab und **niemand sieht diese Seiten**. Sie existieren
+genau für den Rest: App nicht installiert, Desktop, In-App-Browser eines Messengers,
+oder fehlgeschlagene Verifizierung. Vorher stand dort GitHubs rohe „File not found“-Seite.
+
+### Warum `?c=` statt `/invite/<code>`
+
+GitHub Pages ist rein statisch. Für `/invite/a1b2c3` gibt es keine Datei, also antwortet
+der Server mit **404** — und ein `404.html` ändert daran nur den Inhalt, nicht den Status.
+WhatsApp und Telegram rendern für 404-Antworten keine Vorschaukarte.
+
+Deshalb erzeugt die App seit `lendmate` v1.2.4 `https://lendmate.dev/invite/?c=<code>`:
+eine echte Datei, Status 200, Vorschaukarte. Der alte Pfad lebt weiter — `404.html` liest
+den Code aus `location.pathname` und leitet auf die `?c=`-Form um, damit bereits
+verschickte Links und ausgedruckte QR-Codes gültig bleiben. Beide Formen matchen den
+`pathPrefix="/invite"` im `AndroidManifest.xml`, Query-Strings zählen beim Path-Matching
+nicht mit.
+
+### Was die Seiten bewusst *nicht* tun
+
+- **Kein Auto-Redirect in den Store.** Solange die App im geschlossenen Test liegt, würde
+  das jeden wortlos auf eine Play-404 schicken. Stattdessen zwei sichtbare Buttons.
+- **Kein Durchreichen des Auth-Tokens.** Supabase liefert es im URL-**Fragment**
+  (`#access_token=…`), und `intent://` belegt den Fragment-Slot bereits für seine eigene
+  Syntax. Fragment → Query umzuschreiben würde der App etwas anderes übergeben, als sie
+  erwartet. Die Auth-Seiten schicken deshalb ehrlich auf den richtigen Weg zurück.
+
+Der `intent://`-Button ist die Notausfahrt für den Fall, dass `autoVerify` fehlschlägt —
+was aktuell bei Play-Builds passiert, solange der Play-App-Signing-Fingerprint unten fehlt.
+Der `&referrer=`-Parameter am Play-Link kostet nichts und ist die Vorarbeit dafür, eine
+Einladung später über die Installation hinweg zu retten (Play Install Referrer API; die
+App liest ihn heute noch nicht).
 
 ## Warum `/moderation/` hier liegt
 
@@ -61,7 +102,12 @@ werden von ihr hierher weitergeleitet.
   ```
   (1. Eintrag = Debug-Keystore für lokale Tests, 2. = Upload-Key, 3. = Play App Signing.)
 - `[ ]` `apple-app-site-association`: Apple Team ID eintragen (`REPLACE_WITH_APPLE_TEAM_ID`) (siehe Brief Task 8.4) — nicht nötig für den Play-Launch
-- `[ ]` Content-Type für `apple-app-site-association` verifizieren (`curl -I https://lendmate.dev/.well-known/apple-app-site-association`)
+- `[x]` Content-Type für `apple-app-site-association` verifiziert: GitHub Pages liefert die
+  extensionslose Datei als `application/octet-stream` aus, Apple dokumentiert
+  `application/json`. Auf GitHub Pages **nicht konfigurierbar** — es gibt keine
+  Header-Steuerung. Aktuelle iOS-Versionen holen die Datei über Apples CDN und sind dabei
+  tolerant; sollte sich das beim iOS-Launch als Blocker erweisen, muss die Domain hinter
+  einen Host mit Header-Kontrolle (Netlify/Cloudflare Pages) umziehen.
 
 ## Lokal entwickeln
 
