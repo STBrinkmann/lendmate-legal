@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Anmeldelink von LendMate.">
+  <meta name="robots" content="noindex, nofollow">
+  <!-- In der URL steckt ein Auth-Fragment. Es geht keinen Referrer etwas an. -->
+  <meta name="referrer" content="no-referrer">
+  <title>Anmeldung – LendMate</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="brand" href="/">LendMate</a>
+      <p class="tagline">Einfach teilen in vertrauten Gruppen.</p>
+    </header>
+
+    <main id="main">
+      <div class="hero-icon">🌱</div>
+      <h1>Fast geschafft</h1>
+      <p>
+        Dieser Anmeldelink gehört der LendMate-App — dein Browser hat ihn
+        abgefangen, statt ihn an die App weiterzureichen.
+      </p>
+
+      <div class="panel">
+        <p>
+          <strong>So geht es weiter:</strong> Öffne LendMate auf dem Gerät, auf
+          dem du dich anmelden möchtest, und fordere dort einen neuen
+          Anmeldelink an. Diesmal sollte er direkt in der App landen.
+        </p>
+        <p class="note-text">
+          Der Link aus der E-Mail lässt sich nur einmal verwenden und ist jetzt
+          verbraucht — deshalb der neue Anlauf.
+        </p>
+      </div>
+    </main>
+
+    <footer>
+      <div>&copy; <span id="year">2026</span> Sebastian Brinkmann</div>
+      <nav>
+        <a href="/imprint/">Impressum</a>
+        <a href="/privacy/">Datenschutz</a>
+        <a href="/terms/">Nutzungsbedingungen</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script src="/assets/applink.js"></script>
+  <script>
+    LmAppLink.setYear();
+
+    /* Der Token steckt im URL-Fragment (#access_token=...). Ihn an einen
+     * intent://-Link weiterzureichen geht nicht - dort ist der Fragment-Slot
+     * schon von der Intent-Syntax belegt. Ihn stattdessen in einen
+     * Query-Parameter umzuschreiben wuerde der App etwas anderes uebergeben,
+     * als sie erwartet. Also bieten wir hier bewusst nur den Weg in die App
+     * und in den Store an, nicht die Uebergabe des Tokens. */
+    var panel = document.createElement('div');
+    panel.className = 'panel';
+    LmAppLink.renderActions(panel, { appPath: '/', openLabel: 'LendMate öffnen' });
+    document.getElementById('main').appendChild(panel);
+  </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Du wurdest zu einer LendMate-Gruppe eingeladen. Hier geht es zur App.">
+  <!-- Einladungsseiten gehoeren in keinen Suchindex: sie sind nur mit einem
+       konkreten Code sinnvoll und tragen sonst nichts bei. -->
+  <meta name="robots" content="noindex, follow">
+  <title>Einladung – LendMate</title>
+
+  <!-- Vorschaukarte in WhatsApp, Telegram, Signal & Co. Bewusst generisch:
+       die Seite ist statisch, der Gruppenname steckt nur im Code und laesst
+       sich ohne Server nicht rendern. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="LendMate">
+  <meta property="og:title" content="Du bist zu einer LendMate-Gruppe eingeladen">
+  <meta property="og:description" content="LendMate ist die App zum Verleihen und Ausleihen in vertrauten Gruppen. Tippe den Link an, um beizutreten.">
+  <meta property="og:image" content="https://lendmate.dev/assets/favicon-192.png">
+  <meta property="og:url" content="https://lendmate.dev/invite/">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="brand" href="/">LendMate</a>
+      <p class="tagline">Einfach teilen in vertrauten Gruppen.</p>
+    </header>
+
+    <main id="main">
+      <p class="note-text">Einladung wird geladen …</p>
+    </main>
+
+    <footer>
+      <div>&copy; <span id="year">2026</span> Sebastian Brinkmann</div>
+      <nav>
+        <a href="/imprint/">Impressum</a>
+        <a href="/privacy/">Datenschutz</a>
+        <a href="/terms/">Nutzungsbedingungen</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script src="/assets/applink.js"></script>
+  <script>
+    LmAppLink.setYear();
+
+    var main = document.getElementById('main');
+    var params = new URLSearchParams(location.search);
+
+    // `c` ist das kanonische Format, das die App heute erzeugt. `code` ist
+    // geduldet, weil 404.html und aeltere Links darauf zeigen koennen.
+    var raw = (params.get('c') || params.get('code') || '').trim().toLowerCase();
+
+    // groups.invite_code ist encode(gen_random_bytes(6), 'hex') - also genau
+    // 12 Hex-Zeichen. Etwas grosszuegiger pruefen, damit eine spaetere
+    // Laengenaenderung die Seite nicht bricht, aber Muell aussortieren.
+    var code = /^[a-f0-9]{6,32}$/.test(raw) ? raw : '';
+
+    function el(tag, className, text) {
+      var node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined && text !== null) node.textContent = text;
+      return node;
+    }
+
+    main.replaceChildren();
+
+    if (!code) {
+      // Kein Code: der Link wurde unterwegs abgeschnitten - das passiert, wenn
+      // jemand nur einen Teil aus einer Nachricht kopiert.
+      main.appendChild(el('div', 'hero-icon', '🌿'));
+      main.appendChild(el('h1', null, 'Diese Einladung ist unvollständig'));
+      main.appendChild(el('p', null,
+        'Im Link fehlt der Einladungscode. Vermutlich wurde er beim Kopieren ' +
+        'abgeschnitten. Bitte die Person, die dich eingeladen hat, um den ' +
+        'vollständigen Link oder um den Einladungscode — den kannst du in ' +
+        'der App unter „Gruppen“ direkt eintippen.'));
+
+      var panelEmpty = el('div', 'panel');
+      LmAppLink.renderActions(panelEmpty, { appPath: '/invite/' });
+      main.appendChild(panelEmpty);
+    } else {
+      main.appendChild(el('div', 'hero-icon', '🎉'));
+      main.appendChild(el('h1', null, 'Du bist eingeladen!'));
+      main.appendChild(el('p', null,
+        'Jemand möchte dich in seine LendMate-Gruppe holen — dort teilt ihr ' +
+        'Werkzeug, Bücher, Campingzeug und alles andere, was sonst nur ' +
+        'herumsteht.'));
+
+      var panel = el('div', 'panel');
+      LmAppLink.renderCode(panel, code);
+      panel.appendChild(el('p', 'note-text',
+        'Hast du LendMate schon? Dann öffne die App, geh auf „Gruppen“ und ' +
+        'gib den Code dort ein.'));
+
+      LmAppLink.renderActions(panel, {
+        appPath: '/invite/?c=' + encodeURIComponent(code),
+        referrer: 'invite=' + code,
+        openLabel: 'Einladung in der App öffnen'
+      });
+
+      main.appendChild(panel);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Diese Seite gibt es auf lendmate.dev nicht.">
+  <meta name="robots" content="noindex, follow">
+  <title>Nicht gefunden – LendMate</title>
+
+  <script>
+    /* Auffangnetz fuer Pfade, die es als Datei nicht gibt.
+     *
+     * GitHub Pages ist rein statisch: fuer /invite/a1b2c3 existiert keine
+     * Datei, also landet der Aufruf hier. Frueher sah der Eingeladene an
+     * dieser Stelle GitHubs rohe "File not found"-Seite.
+     *
+     * Das kanonische Linkformat der App ist inzwischen /invite/?c=<code> -
+     * das ist eine echte Datei und antwortet mit 200, was Messenger brauchen,
+     * um eine Vorschaukarte zu rendern. Der alte Pfad lebt aber weiter: in
+     * bereits verschickten Nachrichten und auf ausgedruckten QR-Codes. Also
+     * uebersetzen wir ihn hier.
+     *
+     * Bewusst im <head> und vor jedem sichtbaren Inhalt, damit niemand kurz
+     * eine 404 aufblitzen sieht. location.replace() statt href, damit der
+     * Zurueck-Button nicht in dieser Umleitung haengen bleibt. */
+    (function () {
+      var match = location.pathname.match(/^\/invite\/([^/?#]+)\/?$/i);
+      if (match && match[1]) {
+        location.replace('/invite/?c=' + encodeURIComponent(match[1].toLowerCase()) + location.hash);
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="brand" href="/">LendMate</a>
+      <p class="tagline">Einfach teilen in vertrauten Gruppen.</p>
+    </header>
+
+    <main id="main">
+      <div class="hero-icon">🧭</div>
+      <h1>Diese Seite gibt es nicht</h1>
+      <p>
+        Der Link führt ins Leere. Vielleicht wurde er beim Kopieren
+        abgeschnitten, vielleicht hat er sich vertippt.
+      </p>
+
+      <nav class="cards" aria-label="Seiten auf lendmate.dev">
+        <a class="card" href="/">
+          <div class="card-title">Startseite</div>
+          <div class="card-desc">Übersicht aller Seiten zu LendMate.</div>
+        </a>
+        <a class="card" href="/privacy/">
+          <div class="card-title">Datenschutzerklärung</div>
+          <div class="card-desc">Welche Daten wir verarbeiten und warum.</div>
+        </a>
+        <a class="card" href="/imprint/">
+          <div class="card-title">Impressum</div>
+          <div class="card-desc">Anbieterkennzeichnung gemäß § 5 DDG.</div>
+        </a>
+        <a class="card" href="/account-deletion/">
+          <div class="card-title">Konto löschen</div>
+          <div class="card-desc">So kannst du dein LendMate-Konto entfernen.</div>
+        </a>
+      </nav>
+    </main>
+
+    <footer>
+      <div>&copy; <span id="year">2026</span> Sebastian Brinkmann</div>
+      <nav>
+        <a href="/imprint/">Impressum</a>
+        <a href="/privacy/">Datenschutz</a>
+        <a href="/terms/">Nutzungsbedingungen</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script src="/assets/applink.js"></script>
+  <script>
+    LmAppLink.setYear();
+
+    /* Wer auf einem App-Pfad landet, der hier nicht als Datei liegt (etwa
+     * /auth/irgendwas), bekommt zusaetzlich den Weg zurueck in die App
+     * angeboten statt nur eine Sackgasse. */
+    if (/^\/(invite|auth|reset-password)/i.test(location.pathname)) {
+      var panel = document.createElement('div');
+      panel.className = 'panel';
+      LmAppLink.renderActions(panel, { appPath: '/' });
+      document.getElementById('main').appendChild(panel);
+    }
+  </script>
+</body>
+</html>
