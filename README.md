@@ -82,11 +82,22 @@ Seite überhaupt lädt. Alte Clients werden deshalb über
 `app_config.min_supported_version_android` ausgesperrt — siehe `docs/RELEASE.md` im
 App-Repo.
 
-Der `intent://`-Button ist die Notausfahrt für den Fall, dass `autoVerify` fehlschlägt —
-was aktuell bei Play-Builds passiert, solange der Play-App-Signing-Fingerprint unten fehlt.
-Der `&referrer=`-Parameter am Play-Link kostet nichts und ist die Vorarbeit dafür, eine
-Einladung später über die Installation hinweg zu retten (Play Install Referrer API; die
-App liest ihn heute noch nicht).
+Der `intent://`-Button ist die Notausfahrt für den Fall, dass `autoVerify` fehlschlägt
+(etwa bei einem Build, dessen Zertifikat unten nicht eingetragen ist) oder der Link in
+einem In-App-Browser geöffnet wurde. Auf der Einladungsseite steht er **an zweiter
+Stelle** (`storeFirst`): Wer dort landet, hat die App meistens nicht, und ohne App lädt
+der Knopf nur die Seite neu. Auf den Auth-Seiten bleibt er vorn.
+
+### Einladung über die Installation hinweg
+
+Der Play-Link der Einladungsseite trägt `&referrer=invite%3D<code>`. Play reicht das über
+die Install Referrer API an die frisch installierte App weiter; ab `lendmate` v1.5.0 liest
+die App es beim ersten Start (`lib/core/services/install_referrer_service.dart`) und
+legt den Code als offene Einladung ab — nach Registrierung und Onboarding landet der
+Eingeladene direkt in der Gruppe. Nur einmal pro Installation, nur ohne bestehende
+Sitzung und nur, wenn der Klick höchstens 7 Tage zurückliegt (ältere Klicks gehören
+nicht zur gerade erfolgten Installation).
+Das Format `invite=<code>` ist damit ein **Vertrag mit der App** — nicht umbenennen.
 
 ## Die fünf Fingerprints in `assetlinks.json`
 

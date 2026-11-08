@@ -5,8 +5,8 @@
  * installiert und die App-Link-Verifizierung erfolgreich, sieht niemand diese
  * Seiten - Android startet direkt die App. Wir sind also per Definition im
  * Ausnahmefall: App fehlt, Desktop, In-App-Browser eines Messengers, oder die
- * Verifizierung ist fehlgeschlagen (was aktuell bei Play-Builds passiert,
- * solange der Play-App-Signing-Fingerprint in assetlinks.json fehlt).
+ * Verifizierung ist fehlgeschlagen (etwa bei einem Build, dessen
+ * Signaturzertifikat nicht in assetlinks.json steht).
  *
  * Deshalb gibt es hier bewusst KEINE automatische Weiterleitung, sondern
  * sichtbare Buttons: automatisch in den Play Store zu springen wuerde heute
@@ -27,10 +27,10 @@
       navigator.maxTouchPoints > 1);
   var isAndroid = /Android/.test(ua);
 
-  /* Play-Store-Link. `referrer` wird von der Play Install Referrer API beim
-   * ersten Start an die App durchgereicht - heute liest die App ihn noch
-   * nicht, aber der Parameter kostet nichts und ist die Vorarbeit dafuer,
-   * eine Einladung ueber die Installation hinweg zu retten. */
+  /* Play-Store-Link. `referrer` reicht Play ueber die Install Referrer API
+   * an die frisch installierte App weiter. Die App liest ihn beim ersten
+   * Start (install_referrer_service.dart) und parkt `invite=<code>` als
+   * offene Einladung - so ueberlebt eine Einladung die Installation. */
   function storeUrl(referrer) {
     var url = 'https://play.google.com/store/apps/details?id=' + PACKAGE;
     if (referrer) url += '&referrer=' + encodeURIComponent(referrer);
@@ -49,30 +49,48 @@
 
   /* Baut die Buttons, die auf jeder Landeseite gleich aussehen sollen.
    *
-   * opts.appPath  - Pfad auf lendmate.dev, den die App oeffnen soll
-   * opts.referrer - Nutzlast fuer den Play-Store-Link (optional)
+   * opts.appPath   - Pfad auf lendmate.dev, den die App oeffnen soll
+   * opts.referrer  - Nutzlast fuer den Play-Store-Link (optional)
    * opts.openLabel - Beschriftung des "In der App oeffnen"-Buttons
+   * opts.storeFirst - Play-Store-Knopf als Hauptaktion (optional)
+   *
+   * storeFirst ist fuer die Einladungsseite: wer dort landet, hat die App
+   * meistens NICHT - sonst haette Android den Link direkt an sie gegeben. Ohne
+   * App faellt der intent://-Knopf auf `location.href` zurueck, laedt also nur
+   * diese Seite neu; als Hauptknopf sah das kaputt aus. Auf den Auth-Seiten
+   * ist es umgekehrt (wer sich gerade registriert hat, hat die App), dort
+   * bleibt "In der App oeffnen" vorn.
    */
   function renderActions(container, opts) {
     var options = opts || {};
     var row = document.createElement('div');
     row.className = 'btn-row';
 
+    var open = null;
     if (isAndroid && options.appPath) {
-      var open = document.createElement('a');
-      open.className = 'btn btn-primary';
+      open = document.createElement('a');
       open.textContent = options.openLabel || 'In der LendMate-App öffnen';
       open.href = intentUrl(options.appPath, location.href);
-      row.appendChild(open);
     }
 
+    var store = null;
     if (!isIOS) {
-      var store = document.createElement('a');
-      store.className = isAndroid ? 'btn btn-secondary' : 'btn btn-primary';
+      store = document.createElement('a');
       store.textContent = 'LendMate bei Google Play holen';
       store.href = storeUrl(options.referrer);
       store.rel = 'noopener';
-      row.appendChild(store);
+    }
+
+    var first = options.storeFirst ? store : open;
+    var second = options.storeFirst ? open : store;
+    if (!first) { first = second; second = null; }
+    if (first) {
+      first.className = 'btn btn-primary';
+      row.appendChild(first);
+    }
+    if (second) {
+      second.className = 'btn btn-secondary';
+      row.appendChild(second);
     }
 
     container.appendChild(row);

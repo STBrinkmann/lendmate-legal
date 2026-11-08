@@ -98,8 +98,13 @@
       var panel = el('div', 'panel');
       LmAppLink.renderCode(panel, code);
       panel.appendChild(el('p', 'note-text',
-        'Hast du LendMate schon? Dann öffne die App, geh auf „Gruppen“ und ' +
-        'gib den Code dort ein.'));
+        LmAppLink.isAndroid
+          ? 'Installierst du LendMate über den Knopf unten, wartet die ' +
+            'Einladung nach der Anmeldung in der App auf dich. Falls nicht: ' +
+            'tippe den Einladungslink danach einfach noch einmal an oder gib ' +
+            'den Code in der App unter „Gruppen“ ein.'
+          : 'Hast du LendMate schon? Dann öffne die App, geh auf „Gruppen“ und ' +
+            'gib den Code dort ein.'));
 
       // Der Knopf uebergibt bewusst die PFADFORM /invite/<code>, obwohl der
       // geteilte Link ?c= benutzt. Grund: die Pfadform verstehen alle
@@ -111,7 +116,8 @@
       LmAppLink.renderActions(panel, {
         appPath: '/invite/' + encodeURIComponent(code),
         referrer: 'invite=' + code,
-        openLabel: 'Einladung in der App öffnen'
+        openLabel: 'Schon installiert? In der App öffnen',
+        storeFirst: true
       });
 
       main.appendChild(panel);
